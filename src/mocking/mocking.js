@@ -1,5 +1,6 @@
 import { trackPageView } from "../lib/analytics";
 import { getExchangeRate } from "../lib/currency";
+import { isValidEmail, sendEmail } from "../lib/email";
 import { charge } from "../lib/payment";
 // import { isValidEmail, sendEmail } from "../lib/email";
 import { getShippingQuote } from "../lib/shipping";
@@ -41,4 +42,13 @@ export const submitOrder = async (order, creditCard) => {
         success: true,
         message: 'Order placed'
     }
+}
+
+// Parting Testing
+export const signup = async (email) => {
+    if (!isValidEmail(email)) return false;
+
+    await sendEmail(email, 'Welcome to our platform');
+
+    return true;
 }

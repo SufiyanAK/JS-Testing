@@ -1,14 +1,23 @@
 import { vi, it, expect, describe } from 'vitest'
 import { getExchangeRate } from '../../src/lib/currency';
-import { getPriceInCurrency, getShipInfo, renderPage, submitOrder } from '../../src/mocking/mocking';
+import { getPriceInCurrency, getShipInfo, renderPage, signup, submitOrder } from '../../src/mocking/mocking';
 import { getShippingQuote } from '../../src/lib/shipping';
 import { trackPageView } from '../../src/lib/analytics';
 import { charge } from '../../src/lib/payment';
+import { isValidEmail, sendEmail } from '../../src/lib/email';
 
 vi.mock('../../src/lib/currency');
 vi.mock('../../src/lib/shipping');
 vi.mock('../../src/lib/analytics');
 vi.mock('../../src/lib/payment');
+vi.mock('../../src/lib/email', async (originalCall) => {
+    const original = await originalCall();
+
+    return {
+        ...original,
+        sendEmail: vi.fn(original.sendEmail)
+    }
+});
 
 describe('test suite', () => {
     it('test case', () => {
@@ -104,14 +113,6 @@ describe('Render Page', () => {
 
 // Exercise Integration Testing
 describe('Submit Order', () => {
-    // it('should return true when status is failed', async () => {
-    //     const result = await submitOrder({ total: 2000 }, 'Beef Pulao');
-
-    //     expect(result).toEqual({
-    //         success: true,
-    //         message: 'Order placed'
-    //     });
-    // })
     const order = { total: 2000 };
     const creditCard = 'Beef Pulao';
 
@@ -120,7 +121,6 @@ describe('Submit Order', () => {
         await submitOrder(order, creditCard);
 
         expect(charge).toHaveBeenCalledWith(creditCard, order.total);
-
     })
 
     it('should return success when status is success', async () => {
@@ -132,6 +132,7 @@ describe('Submit Order', () => {
             message: 'Order placed'
         });
     })
+
     it('should return failed when status is success', async () => {
         vi.mocked(charge).mockResolvedValue({ status: 'failed' });
         const result = await submitOrder(order, creditCard);
@@ -142,4 +143,64 @@ describe('Submit Order', () => {
         });
     })
 
+})
+
+// Exercise Integrating Testing
+// describe("SignUp", () => {
+//     const email = 'sufiyan@gmail.com'
+//     it("should return false if email is not valid", async () => {
+//         vi.mocked(isValidEmail).mockReturnValue(false);
+
+//         const result = await signup('test@com');
+
+//         expect(result).toBe(false)
+//     });
+
+//     it("should return true if email is valid", async () => {
+//         vi.mocked(isValidEmail).mockReturnValue(false);
+//         const result = await signup(email);
+
+//         expect(result).toBe(false)
+//     });
+
+//     it("should call send email", async () => {
+//         vi.mocked(isValidEmail).mockReturnValue(true);
+//         const result = await signup(email);
+
+//         expect(sendEmail).toHaveBeenCalledWith(email, 'Welcome to our platform');
+//     });
+// })
+
+
+// Parting Testing
+describe('Signup', () => {
+    const validEmail = 'test@gmail.com'
+    it('should return false if email is not valid', async () => {
+        const result = await signup('a');
+
+        expect(result).toBe(false);
+    })
+
+    it('should return true if email is valid', async () => {
+        const result = await signup(validEmail);
+
+        expect(result).toBe(true);
+    })
+
+    it('should send the welcome email message', async () => {
+        const result = await signup(validEmail);
+
+        expect(sendEmail).toHaveBeenCalledWith(validEmail, "Welcome to our platform");
+    })
+
+    it('should send the welcome email message 2', async () => {
+        const result = await signup(validEmail);
+
+        expect(sendEmail).toHaveBeenCalled();
+
+        const arg = vi.mocked(sendEmail).mock.calls[0]
+
+        expect(arg[0]).toBe(validEmail);
+        expect(arg[1]).toMatch('Welcome')
+    })
 })
