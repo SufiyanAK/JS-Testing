@@ -1,10 +1,14 @@
 import { vi, it, expect, describe } from 'vitest'
 import { getExchangeRate } from '../../src/lib/currency';
-import { getPriceInCurrency, getShipInfo } from '../../src/mocking/mocking';
+import { getPriceInCurrency, getShipInfo, renderPage, submitOrder } from '../../src/mocking/mocking';
 import { getShippingQuote } from '../../src/lib/shipping';
+import { trackPageView } from '../../src/lib/analytics';
+import { charge } from '../../src/lib/payment';
 
 vi.mock('../../src/lib/currency');
 vi.mock('../../src/lib/shipping');
+vi.mock('../../src/lib/analytics');
+vi.mock('../../src/lib/payment');
 
 describe('test suite', () => {
     it('test case', () => {
@@ -75,4 +79,67 @@ describe('Get Shipping Info', () => {
 
         expect(shipInfo).toBe('Shipping Cost: $50 (5 days)');
     })
+})
+
+// Integration Testing
+describe('Render Page', () => {
+    it('should return correct content', async () => {
+        const result = await renderPage();
+        console.log(result)
+        expect(result).toBe('<div>Home Page</div>');
+    })
+
+    it('should return correct content', async () => {
+        const result = await renderPage();
+        console.log(result)
+        expect(result).toMatch('Home');
+    })
+
+    it("should call analysis", async () => {
+        const result = await renderPage('/home');
+
+        expect(trackPageView).toHaveBeenCalledWith('/home');
+    })
+})
+
+// Exercise Integration Testing
+describe('Submit Order', () => {
+    // it('should return true when status is failed', async () => {
+    //     const result = await submitOrder({ total: 2000 }, 'Beef Pulao');
+
+    //     expect(result).toEqual({
+    //         success: true,
+    //         message: 'Order placed'
+    //     });
+    // })
+    const order = { total: 2000 };
+    const creditCard = 'Beef Pulao';
+
+    it('should return false when status is failed', async () => {
+        vi.mocked(charge).mockResolvedValue({ status: 'success' });
+        await submitOrder(order, creditCard);
+
+        expect(charge).toHaveBeenCalledWith(creditCard, order.total);
+
+    })
+
+    it('should return success when status is success', async () => {
+        vi.mocked(charge).mockResolvedValue({ status: 'success' });
+        const result = await submitOrder(order, creditCard);
+
+        expect(result).toEqual({
+            success: true,
+            message: 'Order placed'
+        });
+    })
+    it('should return failed when status is success', async () => {
+        vi.mocked(charge).mockResolvedValue({ status: 'failed' });
+        const result = await submitOrder(order, creditCard);
+
+        expect(result).toEqual({
+            success: false,
+            message: 'Payment failed'
+        });
+    })
+
 })
