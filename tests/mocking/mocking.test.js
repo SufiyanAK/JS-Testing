@@ -1,10 +1,11 @@
-import { vi, it, expect, describe } from 'vitest'
+import { vi, it, expect, describe, beforeEach } from 'vitest'
 import { getExchangeRate } from '../../src/lib/currency';
-import { getPriceInCurrency, getShipInfo, renderPage, signup, submitOrder } from '../../src/mocking/mocking';
+import { getPriceInCurrency, getShipInfo, login, renderPage, signup, submitOrder } from '../../src/mocking/mocking';
 import { getShippingQuote } from '../../src/lib/shipping';
 import { trackPageView } from '../../src/lib/analytics';
 import { charge } from '../../src/lib/payment';
 import { isValidEmail, sendEmail } from '../../src/lib/email';
+import security from '../../src/lib/security';
 
 vi.mock('../../src/lib/currency');
 vi.mock('../../src/lib/shipping');
@@ -175,6 +176,14 @@ describe('Submit Order', () => {
 // Parting Testing
 describe('Signup', () => {
     const validEmail = 'test@gmail.com'
+
+    // beforeEach(() => {
+    //     // clear the mock calls individually
+    //     // vi.mocked(sendEmail).mockClear();
+
+    //     // clear all the mock calls at once
+    //     vi.clearAllMocks();
+    // })
     it('should return false if email is not valid', async () => {
         const result = await signup('a');
 
@@ -196,11 +205,24 @@ describe('Signup', () => {
     it('should send the welcome email message 2', async () => {
         const result = await signup(validEmail);
 
-        expect(sendEmail).toHaveBeenCalled();
+        expect(sendEmail).toHaveBeenCalledOnce();
 
         const arg = vi.mocked(sendEmail).mock.calls[0]
 
         expect(arg[0]).toBe(validEmail);
         expect(arg[1]).toMatch('Welcome')
+    })
+})
+
+describe('Login', () => {
+    const email = 'test@gmail.com'
+    it('should email the one-time Login code', async () => {
+        const spy = vi.spyOn(security, 'generateCode')
+        await login(email);
+
+        const spyResult = spy.mock.results[0]
+        console.log(spyResult)
+
+        expect(sendEmail).toHaveBeenCalledWith(email, spyResult.value.toString())
     })
 })
