@@ -11,7 +11,8 @@
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage",
     "format": "prettier . --write",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "check-types": "tsc"
   },
   "keywords": [],
   "author": "",
