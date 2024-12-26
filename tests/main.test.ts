@@ -1,5 +1,5 @@
-import { it, expect, describe } from 'vitest'
-import { calculateDiscount } from '../main';
+import { it, expect, describe } from 'vitest';
+import { calculateDiscount } from '../src/main';
 
 describe('Calculate Discount', () => {
   it('should return discounted price if given valid code', () => {
