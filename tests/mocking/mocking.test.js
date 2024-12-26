@@ -1,150 +1,158 @@
-import { vi, it, expect, describe, beforeEach } from 'vitest'
-import { getExchangeRate } from '../../src/lib/currency';
-import { getDiscount, getPriceInCurrency, getShipInfo, isOnline, login, renderPage, signup, submitOrder } from '../../src/mocking/mocking';
-import { getShippingQuote } from '../../src/lib/shipping';
-import { trackPageView } from '../../src/lib/analytics';
-import { charge } from '../../src/lib/payment';
-import { isValidEmail, sendEmail } from '../../src/lib/email';
-import security from '../../src/lib/security';
+import { vi, it, expect, describe, beforeEach } from "vitest";
+import { getExchangeRate } from "../../src/lib/currency";
+import {
+  getDiscount,
+  getPriceInCurrency,
+  getShipInfo,
+  isOnline,
+  login,
+  renderPage,
+  signup,
+  submitOrder,
+} from "../../src/mocking/mocking";
+import { getShippingQuote } from "../../src/lib/shipping";
+import { trackPageView } from "../../src/lib/analytics";
+import { charge } from "../../src/lib/payment";
+import { isValidEmail, sendEmail } from "../../src/lib/email";
+import security from "../../src/lib/security";
 
-vi.mock('../../src/lib/currency');
-vi.mock('../../src/lib/shipping');
-vi.mock('../../src/lib/analytics');
-vi.mock('../../src/lib/payment');
-vi.mock('../../src/lib/email', async (originalCall) => {
-    const original = await originalCall();
+vi.mock("../../src/lib/currency");
+vi.mock("../../src/lib/shipping");
+vi.mock("../../src/lib/analytics");
+vi.mock("../../src/lib/payment");
+vi.mock("../../src/lib/email", async (originalCall) => {
+  const original = await originalCall();
 
-    return {
-        ...original,
-        sendEmail: vi.fn(original.sendEmail)
-    }
+  return {
+    ...original,
+    sendEmail: vi.fn(original.sendEmail),
+  };
 });
 
-describe('test suite', () => {
-    it('test case', () => {
-        const greet = vi.fn()
+describe("test suite", () => {
+  it("test case", () => {
+    const greet = vi.fn();
 
-        // mockReturnValue
-        // greet.mockReturnValue('Hello World')
+    // mockReturnValue
+    // greet.mockReturnValue('Hello World')
 
-        // mockResolvedValue
-        // greet.mockResolvedValue('Hello World')
+    // mockResolvedValue
+    // greet.mockResolvedValue('Hello World')
 
-        // mockImplementation
-        greet.mockImplementation(name => 'Hello World of ' + name)
+    // mockImplementation
+    greet.mockImplementation((name) => "Hello World of " + name);
 
-        const result = greet('Sufiyan')
+    const result = greet("Sufiyan");
 
-        // expect(greet).toHaveBeenCalled()
-        // expect(greet).toHaveBeenCalledWith('Sufiyan')
-        expect(greet).toHaveBeenCalledOnce(1)
-        console.log(result)
-    })
-})
+    // expect(greet).toHaveBeenCalled()
+    // expect(greet).toHaveBeenCalledWith('Sufiyan')
+    expect(greet).toHaveBeenCalledOnce(1);
+    console.log(result);
+  });
+});
 
-describe('Mock Function Exercise', () => {
-    it('Mock Function', () => {
-        const sendText = vi.fn();
+describe("Mock Function Exercise", () => {
+  it("Mock Function", () => {
+    const sendText = vi.fn();
 
-        sendText.mockImplementation((text) => {
-            return text;
-        });
+    sendText.mockImplementation((text) => {
+      return text;
+    });
 
-        const result = sendText('Hello World');
+    const result = sendText("Hello World");
 
-        expect(sendText).toHaveBeenCalledWith('Hello World');
+    expect(sendText).toHaveBeenCalledWith("Hello World");
 
-        expect(result).toBe('Hello World');
-    })
-})
+    expect(result).toBe("Hello World");
+  });
+});
 
 // Mocking Modules
-describe('get Price In Currency', () => {
-    it('should return price in target currency', () => {
-        vi.mocked(getExchangeRate).mockReturnValue(1.5);
+describe("get Price In Currency", () => {
+  it("should return price in target currency", () => {
+    vi.mocked(getExchangeRate).mockReturnValue(1.5);
 
-        const price = getPriceInCurrency(100, 'AUD');
+    const price = getPriceInCurrency(100, "AUD");
 
-        expect(price).toBe(150);
-    })
-})
+    expect(price).toBe(150);
+  });
+});
 
 // Mocking Modules Exercise
-describe('Get Shipping Info', () => {
-    it('should return shipping unavailable if quote is not available', () => {
-        vi.mocked(getShippingQuote).mockReturnValue(null);
+describe("Get Shipping Info", () => {
+  it("should return shipping unavailable if quote is not available", () => {
+    vi.mocked(getShippingQuote).mockReturnValue(null);
 
-        const shipInfo = getShipInfo('India');
+    const shipInfo = getShipInfo("India");
 
-        expect(shipInfo).toMatch('Unavailable');
-    })
+    expect(shipInfo).toMatch("Unavailable");
+  });
 
-    it('should return estimate days and cost of shipping', () => {
-        vi.mocked(getShippingQuote).mockReturnValue({
-            cost: 50,
-            days: 5
-        });
+  it("should return estimate days and cost of shipping", () => {
+    vi.mocked(getShippingQuote).mockReturnValue({
+      cost: 50,
+      days: 5,
+    });
 
-        const shipInfo = getShipInfo('Australia');
+    const shipInfo = getShipInfo("Australia");
 
-        expect(shipInfo).toBe('Shipping Cost: $50 (5 days)');
-    })
-})
+    expect(shipInfo).toBe("Shipping Cost: $50 (5 days)");
+  });
+});
 
 // Integration Testing
-describe('Render Page', () => {
-    it('should return correct content', async () => {
-        const result = await renderPage();
-        console.log(result)
-        expect(result).toBe('<div>Home Page</div>');
-    })
+describe("Render Page", () => {
+  it("should return correct content", async () => {
+    const result = await renderPage();
+    console.log(result);
+    expect(result).toBe("<div>Home Page</div>");
+  });
 
-    it('should return correct content', async () => {
-        const result = await renderPage();
-        console.log(result)
-        expect(result).toMatch('Home');
-    })
+  it("should return correct content", async () => {
+    const result = await renderPage();
+    console.log(result);
+    expect(result).toMatch("Home");
+  });
 
-    it("should call analysis", async () => {
-        const result = await renderPage('/home');
+  it("should call analysis", async () => {
+    const result = await renderPage("/home");
 
-        expect(trackPageView).toHaveBeenCalledWith('/home');
-    })
-})
+    expect(trackPageView).toHaveBeenCalledWith("/home");
+  });
+});
 
 // Exercise Integration Testing
-describe('Submit Order', () => {
-    const order = { total: 2000 };
-    const creditCard = 'Beef Pulao';
+describe("Submit Order", () => {
+  const order = { total: 2000 };
+  const creditCard = "Beef Pulao";
 
-    it('should return false when status is failed', async () => {
-        vi.mocked(charge).mockResolvedValue({ status: 'success' });
-        await submitOrder(order, creditCard);
+  it("should return false when status is failed", async () => {
+    vi.mocked(charge).mockResolvedValue({ status: "success" });
+    await submitOrder(order, creditCard);
 
-        expect(charge).toHaveBeenCalledWith(creditCard, order.total);
-    })
+    expect(charge).toHaveBeenCalledWith(creditCard, order.total);
+  });
 
-    it('should return success when status is success', async () => {
-        vi.mocked(charge).mockResolvedValue({ status: 'success' });
-        const result = await submitOrder(order, creditCard);
+  it("should return success when status is success", async () => {
+    vi.mocked(charge).mockResolvedValue({ status: "success" });
+    const result = await submitOrder(order, creditCard);
 
-        expect(result).toEqual({
-            success: true,
-            message: 'Order placed'
-        });
-    })
+    expect(result).toEqual({
+      success: true,
+      message: "Order placed",
+    });
+  });
 
-    it('should return failed when status is success', async () => {
-        vi.mocked(charge).mockResolvedValue({ status: 'failed' });
-        const result = await submitOrder(order, creditCard);
+  it("should return failed when status is success", async () => {
+    vi.mocked(charge).mockResolvedValue({ status: "failed" });
+    const result = await submitOrder(order, creditCard);
 
-        expect(result).toEqual({
-            success: false,
-            message: 'Payment failed'
-        });
-    })
-
-})
+    expect(result).toEqual({
+      success: false,
+      message: "Payment failed",
+    });
+  });
+});
 
 // Exercise Integrating Testing
 // describe("SignUp", () => {
@@ -172,90 +180,92 @@ describe('Submit Order', () => {
 //     });
 // })
 
-
 // Parting Testing
-describe('Signup', () => {
-    const validEmail = 'test@gmail.com'
+describe("Signup", () => {
+  const validEmail = "test@gmail.com";
 
-    // beforeEach(() => {
-    //     // clear the mock calls individually
-    //     // vi.mocked(sendEmail).mockClear();
+  // beforeEach(() => {
+  //     // clear the mock calls individually
+  //     // vi.mocked(sendEmail).mockClear();
 
-    //     // clear all the mock calls at once
-    //     vi.clearAllMocks();
-    // })
-    it('should return false if email is not valid', async () => {
-        const result = await signup('a');
+  //     // clear all the mock calls at once
+  //     vi.clearAllMocks();
+  // })
+  it("should return false if email is not valid", async () => {
+    const result = await signup("a");
 
-        expect(result).toBe(false);
-    })
+    expect(result).toBe(false);
+  });
 
-    it('should return true if email is valid', async () => {
-        const result = await signup(validEmail);
+  it("should return true if email is valid", async () => {
+    const result = await signup(validEmail);
 
-        expect(result).toBe(true);
-    })
+    expect(result).toBe(true);
+  });
 
-    it('should send the welcome email message', async () => {
-        const result = await signup(validEmail);
+  it("should send the welcome email message", async () => {
+    const result = await signup(validEmail);
 
-        expect(sendEmail).toHaveBeenCalledWith(validEmail, "Welcome to our platform");
-    })
+    expect(sendEmail).toHaveBeenCalledWith(
+      validEmail,
+      "Welcome to our platform",
+    );
+  });
 
-    it('should send the welcome email message 2', async () => {
-        const result = await signup(validEmail);
+  it("should send the welcome email message 2", async () => {
+    const result = await signup(validEmail);
 
-        expect(sendEmail).toHaveBeenCalledOnce();
+    expect(sendEmail).toHaveBeenCalledOnce();
 
-        const arg = vi.mocked(sendEmail).mock.calls[0]
+    const arg = vi.mocked(sendEmail).mock.calls[0];
 
-        expect(arg[0]).toBe(validEmail);
-        expect(arg[1]).toMatch('Welcome')
-    })
-})
+    expect(arg[0]).toBe(validEmail);
+    expect(arg[1]).toMatch("Welcome");
+  });
+});
 
-describe('Login', () => {
-    const email = 'test@gmail.com'
-    it('should email the one-time Login code', async () => {
-        const spy = vi.spyOn(security, 'generateCode')
-        await login(email);
+describe("Login", () => {
+  const email = "test@gmail.com";
+  it("should email the one-time Login code", async () => {
+    const spy = vi.spyOn(security, "generateCode");
+    await login(email);
 
-        const spyResult = spy.mock.results[0]
-        console.log(spyResult)
+    const spyResult = spy.mock.results[0];
+    console.log(spyResult);
 
-        expect(sendEmail).toHaveBeenCalledWith(email, spyResult.value.toString())
-    })
-})
+    expect(sendEmail).toHaveBeenCalledWith(email, spyResult.value.toString());
+  });
+});
 
 // Mocking Dates
 describe("Is Online", () => {
-    it('should return false if current hour is outside opening hours', () => {
-        vi.setSystemTime(new Date('2024-12-25 08:59'));
-        expect(isOnline()).toBe(false);
-    })
+  it("should return false if current hour is outside opening hours", () => {
+    vi.setSystemTime(new Date("2024-12-25 08:59"));
+    expect(isOnline()).toBe(false);
+  });
 
-    it('should return true if current hour is in between opening hours', () => {
-        vi.setSystemTime(new Date('2024-12-25 09:01'));
-        expect(isOnline()).toBe(true);
-    })
-})
+  it("should return true if current hour is in between opening hours", () => {
+    vi.setSystemTime(new Date("2024-12-25 09:01"));
+    expect(isOnline()).toBe(true);
+  });
+});
 
 // Mocking Dates Exercise
-describe('Get Discount', () => {
-    // on Current Date
-    it('should give discount when it is christmasDay', () => {
-        expect(getDiscount()).toBe(0.5)
-    })
+describe("Get Discount", () => {
+  // on Current Date
+  it("should give discount when it is christmasDay", () => {
+    expect(getDiscount()).toBe(0.5);
+  });
 
-    // Setting date on my own
-    it('should give no discount when it is not christmas Day', () => {
-        vi.setSystemTime(new Date('2024-12-26'));
-        expect(getDiscount()).toBe(0)
-    })
+  // Setting date on my own
+  it("should give no discount when it is not christmas Day", () => {
+    vi.setSystemTime(new Date("2024-12-26"));
+    expect(getDiscount()).toBe(0);
+  });
 
-    // Setting date on my own
-    it('should give no discount when it is christmas Day', () => {
-        vi.setSystemTime(new Date('2024-12-25'));
-        expect(getDiscount()).toBe(0.5)
-    })
-})
+  // Setting date on my own
+  it("should give no discount when it is christmas Day", () => {
+    vi.setSystemTime(new Date("2024-12-25"));
+    expect(getDiscount()).toBe(0.5);
+  });
+});

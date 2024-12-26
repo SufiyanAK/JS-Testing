@@ -1,7 +1,7 @@
-import delay from 'delay';
+import delay from "delay";
 
 export const trackPageView = async (path) => {
-    console.log(`Tracking page view for ${path}`);
+  console.log(`Tracking page view for ${path}`);
 
-    await delay(3000);
-}
+  await delay(3000);
+};
