@@ -1,4 +1,7 @@
-export const calculateDiscount = (price: number, discountCode: string):number | string => {
+export const calculateDiscount = (
+  price: number,
+  discountCode: string,
+): number | string => {
   if (typeof price !== 'number' || price <= 0) {
     return 'Invalid price';
   }
