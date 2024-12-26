@@ -58,3 +58,20 @@ export const login = async (email) => {
 
     await sendEmail(email, code.toString());
 }
+
+// Mocking Dates
+export const isOnline = () => {
+    const availableHours = [9, 10, 11, 12, 13, 14, 15, 16, 17];
+    const [open, close] = availableHours;
+    const currentHour = new Date().getHours();
+
+    return currentHour >= open && currentHour <= close;
+}
+
+// Mocking Dates Exercise
+export const getDiscount = () => {
+    const today = new Date()
+    const isChristmasDay = today.getMonth() === 11 && today.getDate() === 25;
+
+    return isChristmasDay ? 0.5 : 0;
+}

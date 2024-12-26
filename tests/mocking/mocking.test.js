@@ -1,6 +1,6 @@
 import { vi, it, expect, describe, beforeEach } from 'vitest'
 import { getExchangeRate } from '../../src/lib/currency';
-import { getPriceInCurrency, getShipInfo, login, renderPage, signup, submitOrder } from '../../src/mocking/mocking';
+import { getDiscount, getPriceInCurrency, getShipInfo, isOnline, login, renderPage, signup, submitOrder } from '../../src/mocking/mocking';
 import { getShippingQuote } from '../../src/lib/shipping';
 import { trackPageView } from '../../src/lib/analytics';
 import { charge } from '../../src/lib/payment';
@@ -224,5 +224,38 @@ describe('Login', () => {
         console.log(spyResult)
 
         expect(sendEmail).toHaveBeenCalledWith(email, spyResult.value.toString())
+    })
+})
+
+// Mocking Dates
+describe("Is Online", () => {
+    it('should return false if current hour is outside opening hours', () => {
+        vi.setSystemTime(new Date('2024-12-25 08:59'));
+        expect(isOnline()).toBe(false);
+    })
+
+    it('should return true if current hour is in between opening hours', () => {
+        vi.setSystemTime(new Date('2024-12-25 09:01'));
+        expect(isOnline()).toBe(true);
+    })
+})
+
+// Mocking Dates Exercise
+describe('Get Discount', () => {
+    // on Current Date
+    it('should give discount when it is christmasDay', () => {
+        expect(getDiscount()).toBe(0.5)
+    })
+
+    // Setting date on my own
+    it('should give no discount when it is not christmas Day', () => {
+        vi.setSystemTime(new Date('2024-12-26'));
+        expect(getDiscount()).toBe(0)
+    })
+
+    // Setting date on my own
+    it('should give no discount when it is christmas Day', () => {
+        vi.setSystemTime(new Date('2024-12-25'));
+        expect(getDiscount()).toBe(0.5)
     })
 })
