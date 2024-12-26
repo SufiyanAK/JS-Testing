@@ -1,4 +1,4 @@
-import delay from "delay";
+import delay from 'delay';
 
 export const charge = async (card, totalAmount) => {
   console.log(`Charging ${totalAmount} to ${card}`);
@@ -6,6 +6,6 @@ export const charge = async (card, totalAmount) => {
   await delay(3000);
 
   return {
-    status: "success",
+    status: 'success',
   };
 };

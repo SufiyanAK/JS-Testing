@@ -1,30 +1,30 @@
 export const getCoupon = () => {
   return [
     {
-      code: "SUMMER20",
+      code: 'SUMMER20',
       discount: 10,
     },
     {
-      code: "WINTER20",
+      code: 'WINTER20',
       discount: 5,
     },
   ];
 };
 
 export const calculateDiscount = (price, discountCode) => {
-  if (typeof price !== "number" || price <= 0) {
-    return "Invalid price";
+  if (typeof price !== 'number' || price <= 0) {
+    return 'Invalid price';
   }
 
-  if (typeof discountCode !== "string") {
-    return "Invalid discount code";
+  if (typeof discountCode !== 'string') {
+    return 'Invalid discount code';
   }
 
   let discount = 0;
 
-  if (discountCode === "SAVE10") {
+  if (discountCode === 'SAVE10') {
     discount = 0.1;
-  } else if (discountCode === "SAVE20") {
+  } else if (discountCode === 'SAVE20') {
     discount = 0.2;
   }
 
@@ -35,18 +35,18 @@ export const validateUserInput = (username, age) => {
   let error = [];
 
   if (
-    typeof username !== "string" ||
+    typeof username !== 'string' ||
     username.length < 3 ||
     username.length > 255
   ) {
-    error.push("Invalid username");
+    error.push('Invalid username');
   }
 
-  if (typeof age !== "number" || age < 18 || age > 65) {
-    error.push("Invalid age");
+  if (typeof age !== 'number' || age < 18 || age > 65) {
+    error.push('Invalid age');
   }
 
-  return error.length === 0 ? "validation successful" : error.join(", ");
+  return error.length === 0 ? 'validation successful' : error.join(', ');
 };
 
 // Boundary Testing
@@ -59,12 +59,12 @@ export const isValidUserName = (userName) => {
   const minLength = 5;
   const maxLength = 15;
 
-  if (typeof userName !== "string") {
-    return "Invalid user name";
+  if (typeof userName !== 'string') {
+    return 'Invalid user name';
   }
 
   if (!userName) {
-    return "Invalid, User name cannot be null";
+    return 'Invalid, User name cannot be null';
   }
 
   return userName.length >= minLength && userName.length <= maxLength;
@@ -77,12 +77,12 @@ export const canDrive = (age, countryCode) => {
     PK: 18,
   };
 
-  if (typeof age !== "number" || age <= 0) {
-    return "Invalid age";
+  if (typeof age !== 'number' || age <= 0) {
+    return 'Invalid age';
   }
 
-  if (typeof countryCode !== "string" || !legalDrivingAge[countryCode]) {
-    return "Invalid country code";
+  if (typeof countryCode !== 'string' || !legalDrivingAge[countryCode]) {
+    return 'Invalid country code';
   }
 
   return age >= legalDrivingAge[countryCode];
@@ -93,7 +93,7 @@ export const fetchData = () => {
   // return Promise.reject({ reason: 'Network Error' });
   return new Promise((resolve) => {
     setTimeout(() => {
-      const data = ["John", "Doe", "Jane", "Doe"];
+      const data = ['John', 'Doe', 'Jane', 'Doe'];
       resolve(data);
     });
   });
@@ -111,14 +111,14 @@ export class Stack {
 
   pop() {
     if (this.isEmpty()) {
-      throw new Error("Stack is empty");
+      throw new Error('Stack is empty');
     }
     return this.stack.pop();
   }
 
   peek() {
     if (this.isEmpty()) {
-      throw new Error("Stack is empty");
+      throw new Error('Stack is empty');
     }
     return this.stack[this.stack.length - 1];
   }
